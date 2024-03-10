@@ -71,18 +71,24 @@ Kubernetes默认CRI（容器运行时）为Docker，因此先安装Docker。
 
 ```
 $ wget https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo -O /etc/yum.repos.d/docker-ce.repo
-$ yum -y install docker-ce-18.06.1.ce-3.el7
+$ yum install docker-ce-19.03.13-3.el8 docker-ce-cli-19.03.13-3.el8 containerd.io
 $ systemctl enable docker && systemctl start docker
 $ docker --version
 Docker version 18.06.1-ce, build e68fc7a
 ```
 
+修改docker镜像源
 ```
 $ cat > /etc/docker/daemon.json << EOF
 {
   "registry-mirrors": ["https://b9pmyelo.mirror.aliyuncs.com"]
 }
 EOF
+```
+
+重启docker
+```
+systemctl restart docker
 ```
 
 ### 3.2 添加阿里云YUM软件源
@@ -111,7 +117,8 @@ $ systemctl enable kubelet
 ## 4. 部署Kubernetes Master
 
 在192.168.31.61（Master）执行。
-
+apiserver-advertise-address当前节点的ip也就是master的ip
+下面两个ip无所谓，不要与上面的冲突即可
 ```
 $ kubeadm init \
   --apiserver-advertise-address=192.168.44.146 \
@@ -155,7 +162,7 @@ kubeadm token create --print-join-command
 wget https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 ```
 
-默认镜像地址无法访问，sed命令修改为docker hub镜像仓库。
+默认镜像地址无法访问，sed命令修改为docker hub镜像仓库。【这里的命令在master上面执行】
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
