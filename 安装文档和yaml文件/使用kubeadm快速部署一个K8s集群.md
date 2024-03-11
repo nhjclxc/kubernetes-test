@@ -119,16 +119,26 @@ $ systemctl enable kubelet
 在192.168.31.61（Master）执行。
 apiserver-advertise-address当前节点的ip也就是master的ip
 下面两个ip无所谓，不要与上面的冲突即可
+
 ```
 $ kubeadm init \
   --apiserver-advertise-address=192.168.44.146 \
   --image-repository registry.aliyuncs.com/google_containers \
   --kubernetes-version v1.18.0 \
   --service-cidr=10.96.0.0/12 \
-  --pod-network-cidr=10.244.0.0/16
+  --pod-network-cidr=10.0.0.0/16
 ```
 
 由于默认拉取镜像地址k8s.gcr.io国内无法访问，这里指定阿里云镜像仓库地址。
+
+上述命令可以通以下reset命令过来重置
+
+```
+kubeadm reset
+rm -rf ~/.kube
+```
+
+
 
 使用kubectl工具：
 
